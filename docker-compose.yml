@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  server:
+    build: server/
+    volumes:
+      - ./server/src/:/usr/src/miska/server/src/
+      - ./database/content/:/usr/src/miska/database/content/
+    depends_on:
+      - db
+  
+  db:
+    image: mongo:latest
+    volumes:
+      - ./database/mongodb:/data/db
+    env_file:
+      - ./database/.env
+    ports:
+      - 27017:27017
