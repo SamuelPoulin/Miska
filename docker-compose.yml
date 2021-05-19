@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   server:
-    build: server/
+    build: ./server/
     volumes:
       - ./server/src/:/usr/src/miska/server/src/
       - ./database/content/:/usr/src/miska/database/content/
@@ -12,7 +12,7 @@ services:
   db:
     image: mongo:latest
     volumes:
-      - ./database/mongodb:/data/db
+      - ./database/mongodb/:/data/db/
     env_file:
       - ./database/.env
     ports:

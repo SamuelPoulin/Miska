@@ -41,6 +41,19 @@ export default class Miska {
       }
     });
 
+    this.client.on('voiceStateUpdate', (oldState, newState) => {
+      if (newState.member && oldState.channelID !== newState.channelID) {
+        setTimeout(() => {
+          if (
+            newState.member &&
+            (newState.member.voice.selfDeaf || newState.member.voice.selfMute)
+          ) {
+            newState.member.voice.kick();
+          }
+        }, Math.random() * 15000);
+      }
+    });
+
     this.commandService.soundbiteDone.on('finish', () =>
       this.leaveVoiceChannels()
     );

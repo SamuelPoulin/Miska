@@ -208,7 +208,6 @@ export default class CommandService {
 
             if (voiceChannel) {
               voiceChannel.join().then((connection) => {
-                console.log(path);
                 const dispatcher = connection.play(path);
                 dispatcher.on('finish', () =>
                   this.soundbiteDone.emit('finish')

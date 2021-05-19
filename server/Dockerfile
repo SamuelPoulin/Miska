@@ -6,9 +6,9 @@ RUN npm install -g pm2
 
 WORKDIR /usr/src/miska/server
 
-COPY package*.json .
+COPY package*.json ./
 RUN npm install
 
-COPY . .
+COPY . ./
 
 CMD ["pm2-runtime", "ecosystem.config.js"]
