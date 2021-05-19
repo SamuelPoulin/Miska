@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   server:
+    restart: always
     build: ./server/
     volumes:
       - ./server/src/:/usr/src/miska/server/src/
@@ -10,6 +11,7 @@ services:
       - db
   
   db:
+    restart: always
     image: mongo:latest
     volumes:
       - ./database/mongodb/:/data/db/
