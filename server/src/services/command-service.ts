@@ -248,20 +248,21 @@ export default class CommandService {
   private fetchSoundbite(message: Message): void {
     const url = _.last(message.content.split(' '));
 
-    if (url?.match(/\bhttps?::\/\/\S+/gi)) {
-      if (message.member && message.member.voice.channel) {
-        const voiceChannel = message.member.voice.channel;
+    if (message.member && message.member.voice.channel) {
+      const voiceChannel = message.member.voice.channel;
 
-        if (voiceChannel) {
-          voiceChannel.join().then((connection) => {
-            const dispatcher = connection.play(ytdl(url), { volume: 0.5 });
-            dispatcher.on('finish', () => this.soundbiteDone.emit('finish'));
-            dispatcher.on('error', () => this.soundbiteDone.emit('error'));
+      if (voiceChannel) {
+        voiceChannel.join().then((connection) => {
+          const dispatcher = connection.play(ytdl(url), { volume: 0.5 });
+          dispatcher.on('finish', () => this.soundbiteDone.emit('finish'));
+          dispatcher.on('error', (err) => {
+            console.error(err);
+            message.channel.send(`> :x: Could not play the video.`);
+
+            this.soundbiteDone.emit('error');
           });
-        }
+        });
       }
-    } else {
-      message.channel.send(`> :x: The url is incorrect.`);
     }
   }
 }
