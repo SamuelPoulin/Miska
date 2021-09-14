@@ -248,20 +248,22 @@ export default class CommandService {
   private fetchSoundbite(message: Message): void {
     const url = _.last(message.content.split(' '));
 
-    if (message.member && message.member.voice.channel) {
-      const voiceChannel = message.member.voice.channel;
+    if (url) {
+      if (message.member && message.member.voice.channel) {
+        const voiceChannel = message.member.voice.channel;
 
-      if (voiceChannel) {
-        voiceChannel.join().then((connection) => {
-          const dispatcher = connection.play(ytdl(url), { volume: 0.5 });
-          dispatcher.on('finish', () => this.soundbiteDone.emit('finish'));
-          dispatcher.on('error', (err) => {
-            console.error(err);
-            message.channel.send(`> :x: Could not play the video.`);
+        if (voiceChannel) {
+          voiceChannel.join().then((connection) => {
+            const dispatcher = connection.play(ytdl(url), { volume: 0.5 });
+            dispatcher.on('finish', () => this.soundbiteDone.emit('finish'));
+            dispatcher.on('error', (err) => {
+              console.error(err);
+              message.channel.send(`> :x: Could not play the video.`);
 
-            this.soundbiteDone.emit('error');
+              this.soundbiteDone.emit('error');
+            });
           });
-        });
+        }
       }
     }
   }
