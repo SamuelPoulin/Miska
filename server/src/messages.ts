@@ -11,6 +11,7 @@ export const messages = {
     },
     soundbite: {
       message:
+        '> `fetch` `f` `<name>`\n> Fetch a soundbite from YouTube.\n\n' +
         '> `remember` `r` `<name>`\n> Remember a soundbite or list all nightmares.\n\n' +
         '> `inject` `i` `<name>`\n> Add a new soundbite.\n\n' +
         '> `purge` `<name>`\n> Destroy soundbite.\n\n',
