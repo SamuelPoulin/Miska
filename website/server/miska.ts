@@ -1,9 +1,9 @@
-import { Client, Message } from 'discord.js';
-import { inject, injectable } from 'inversify';
+import { Client, Message, VoiceChannel } from "discord.js";
+import { inject, injectable } from "inversify";
 
-import TYPES from './inversify/types';
-import CommandService from './services/command-service';
-import DatabaseService from './services/database-service';
+import TYPES from "./inversify/types";
+import CommandService from "./services/command-service";
+import DatabaseService from "./services/database-service";
 
 @injectable()
 export default class Miska {
@@ -23,17 +23,17 @@ export default class Miska {
   }
 
   private initSubscriptions(): void {
-    this.client.on('ready', () => {
-      console.log('Miska is up and running.');
+    this.client.on("ready", () => {
+      console.log("Miska is up and running.");
 
       if (this.client && this.client.user) {
-        this.client.user.setActivity('miska');
+        this.client.user.setActivity("miska");
       }
     });
 
-    this.client.on('message', (message: Message) => {
-      if (!message.author.bot && message.channel.type !== 'dm') {
-        if (message.content === 'stfu') {
+    this.client.on("message", (message: Message) => {
+      if (!message.author.bot && message.channel.type !== "dm") {
+        if (message.content === "stfu") {
           this.leaveVoiceChannels();
         } else {
           this.commandService.handleMessage(message);
@@ -41,7 +41,7 @@ export default class Miska {
       }
     });
 
-    this.client.on('voiceStateUpdate', (oldState, newState) => {
+    this.client.on("voiceStateUpdate", (oldState, newState) => {
       if (newState.member && oldState.channelID !== newState.channelID) {
         setTimeout(() => {
           if (
@@ -54,10 +54,10 @@ export default class Miska {
       }
     });
 
-    this.commandService.soundbiteDone.on('finish', () =>
+    this.commandService.soundbiteDone.on("finish", () =>
       this.leaveVoiceChannels()
     );
-    this.commandService.soundbiteDone.on('error', () =>
+    this.commandService.soundbiteDone.on("error", () =>
       this.leaveVoiceChannels()
     );
   }
@@ -66,9 +66,15 @@ export default class Miska {
     this.client.login(process.env.DISCORD_TOKEN);
   }
 
-  private leaveVoiceChannels() {
+  leaveVoiceChannels() {
     if (this.client && this.client.voice) {
       this.client.voice.connections.forEach((c) => c.disconnect());
     }
+  }
+
+  joinChannel(): void {
+    this.client.channels.fetch("653141111824449536").then((channel) => {
+      (channel as VoiceChannel).join();
+    });
   }
 }

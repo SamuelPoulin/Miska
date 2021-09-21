@@ -1,9 +1,21 @@
+import "reflect-metadata";
+
+import dotenv from "dotenv";
+dotenv.config();
+
+import Miska from "./miska";
+import container from "./inversify/inversify.config";
+import TYPES from "./inversify/types";
+
+const miska: Miska = container.get<Miska>(TYPES.Miska);
+miska.start();
+
 import next from "next";
 import express, { Request, Response } from "express";
 import { ApolloServer, gql } from "apollo-server-express";
 
 const dev = process.env.NODE_ENV !== "production";
-const port = 3000;
+const port = 6969;
 
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -12,11 +24,28 @@ const typeDefs = gql`
   type Query {
     helloWorld: Boolean
   }
+
+  type Mutation {
+    joinChannel: Boolean
+    leaveChannel: Boolean
+  }
 `;
 
 const resolvers = {
   Query: {
     helloWorld: async () => true,
+  },
+  Mutation: {
+    joinChannel: async () => {
+      miska.joinChannel();
+
+      return true;
+    },
+    leaveChannel: async () => {
+      miska.leaveVoiceChannels();
+
+      return true;
+    },
   },
 };
 

@@ -1,15 +1,17 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  server:
+  website:
     restart: always
-    build: ./server/
+    build: ./website/
     volumes:
-      - ./server/src/:/usr/src/miska/server/src/
+      - ./website/src/:/usr/src/miska/website/src/
       - ./database/content/:/usr/src/miska/database/content/
+    ports:
+      - 6969:6969
     depends_on:
       - db
-  
+
   db:
     restart: always
     image: mongo:latest
