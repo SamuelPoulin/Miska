@@ -13,6 +13,7 @@ miska.start();
 import next from "next";
 import express, { Request, Response } from "express";
 import { ApolloServer, gql } from "apollo-server-express";
+import { IResolvers } from "@graphql-tools/utils";
 
 const dev = process.env.NODE_ENV !== "production";
 const port = 6969;
@@ -21,19 +22,34 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 const typeDefs = gql`
+  type Soundbite {
+    name: String!
+    description: String
+    count: Int!
+  }
+
   type Query {
-    helloWorld: Boolean
+    soundbites: [Soundbite]
   }
 
   type Mutation {
     joinChannel: Boolean
     leaveChannel: Boolean
+    playSoundbite(name: String): Boolean
   }
 `;
 
-const resolvers = {
+const resolvers: IResolvers = {
   Query: {
-    helloWorld: async () => true,
+    soundbites: async () => {
+      const soundBites = await miska.getSoundBites();
+
+      return soundBites.map((soundbite) => ({
+        name: soundbite.name,
+        description: soundbite.description,
+        count: soundbite.count,
+      }));
+    },
   },
   Mutation: {
     joinChannel: async () => {
@@ -45,6 +61,9 @@ const resolvers = {
       miska.leaveVoiceChannels();
 
       return true;
+    },
+    playSoundbite: async (_, { name }) => {
+      miska.playSoundbite(name);
     },
   },
 };

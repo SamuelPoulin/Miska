@@ -1,13 +1,13 @@
-import EventEmitter from 'events';
-import { Message } from 'discord.js';
-import { inject, injectable } from 'inversify';
-import _ from 'lodash';
-import ytdl from 'ytdl-core';
+import EventEmitter from "events";
+import { Message } from "discord.js";
+import { inject, injectable } from "inversify";
+import _ from "lodash";
+import ytdl from "ytdl-core";
 
-import { messages } from '../messages';
-import FlashbackService from './flashback-service';
-import SoundbiteService from './soundbite-service';
-import TYPES from '../inversify/types';
+import { messages } from "../messages";
+import FlashbackService from "./flashback-service";
+import SoundbiteService from "./soundbite-service";
+import TYPES from "../inversify/types";
 
 @injectable()
 export default class CommandService {
@@ -21,12 +21,12 @@ export default class CommandService {
   }
 
   handleMessage(message: Message): void {
-    const splitMessage = message.content.toLowerCase().split(' ');
+    const splitMessage = message.content.toLowerCase().split(" ");
     const nextArguments = _.drop(splitMessage);
 
     switch (_.first(splitMessage)) {
-      case 'miska':
-      case 'm':
+      case "miska":
+      case "m":
         this.miska(message, nextArguments);
         break;
     }
@@ -36,12 +36,12 @@ export default class CommandService {
     const nextArguments = _.drop(previousArguments);
 
     switch (_.first(previousArguments)) {
-      case 'flashback':
-      case 'f':
+      case "flashback":
+      case "f":
         this.flashback(message, nextArguments);
         break;
-      case 'soundbite':
-      case 's':
+      case "soundbite":
+      case "s":
         this.soundbite(message, nextArguments);
         break;
       default:
@@ -54,15 +54,15 @@ export default class CommandService {
     const nextArguments = _.drop(previousArguments);
 
     switch (_.first(previousArguments)) {
-      case 'inject':
-      case 'i':
+      case "inject":
+      case "i":
         this.injectFlashback(message);
         break;
-      case 'purge':
+      case "purge":
         this.purgeFlashback(message, nextArguments);
         break;
-      case 'remember':
-      case 'r':
+      case "remember":
+      case "r":
         this.rememberFlashback(message, nextArguments);
         break;
       default:
@@ -124,7 +124,7 @@ export default class CommandService {
       this.flashbackService
         .getAllFlashbacks()
         .then((flashbacks) => {
-          let text = '';
+          let text = "";
 
           for (const flashback of flashbacks) {
             text += `> :outbox_tray: **${flashback.count}**\t\`${flashback.name}\`\n\n`;
@@ -143,19 +143,19 @@ export default class CommandService {
     const nextArguments = _.drop(previousArguments);
 
     switch (_.first(previousArguments)) {
-      case 'inject':
-      case 'i':
+      case "inject":
+      case "i":
         this.injectSoundbite(message);
         break;
-      case 'purge':
+      case "purge":
         this.purgeSoundbite(message, nextArguments);
         break;
-      case 'remember':
-      case 'r':
+      case "remember":
+      case "r":
         this.rememberSoundbite(message, nextArguments);
         break;
-      case 'fetch':
-      case 'f':
+      case "fetch":
+      case "f":
         this.fetchSoundbite(message);
         break;
       default:
@@ -214,10 +214,10 @@ export default class CommandService {
             if (voiceChannel) {
               voiceChannel.join().then((connection) => {
                 const dispatcher = connection.play(path);
-                dispatcher.on('finish', () =>
-                  this.soundbiteDone.emit('finish')
+                dispatcher.on("finish", () =>
+                  this.soundbiteDone.emit("finish")
                 );
-                dispatcher.on('error', () => this.soundbiteDone.emit('error'));
+                dispatcher.on("error", () => this.soundbiteDone.emit("error"));
               });
             }
           }
@@ -230,7 +230,7 @@ export default class CommandService {
       this.soundbiteService
         .getAllSoundbites()
         .then((soundbites) => {
-          let text = '';
+          let text = "";
 
           for (const soundbite of soundbites) {
             text += `> :outbox_tray: **${soundbite.count}**\t\`${soundbite.name}\`\n\n`;
@@ -246,7 +246,7 @@ export default class CommandService {
   }
 
   private fetchSoundbite(message: Message): void {
-    const url = _.last(message.content.split(' '));
+    const url = _.last(message.content.split(" "));
 
     if (url) {
       if (message.member && message.member.voice.channel) {
@@ -255,12 +255,12 @@ export default class CommandService {
         if (voiceChannel) {
           voiceChannel.join().then((connection) => {
             const dispatcher = connection.play(ytdl(url), { volume: 0.5 });
-            dispatcher.on('finish', () => this.soundbiteDone.emit('finish'));
-            dispatcher.on('error', (err) => {
+            dispatcher.on("finish", () => this.soundbiteDone.emit("finish"));
+            dispatcher.on("error", (err) => {
               console.error(err);
               message.channel.send(`> :x: Could not play the video.`);
 
-              this.soundbiteDone.emit('error');
+              this.soundbiteDone.emit("error");
             });
           });
         }

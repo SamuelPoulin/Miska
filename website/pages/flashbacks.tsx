@@ -1,12 +1,11 @@
 import Head from "next/head";
-
 import PageContainer from "../src/component/layout/PageContainer";
 
-const Home = () => {
+const Flashbacks = () => {
   return (
     <>
       <Head>
-        <title>Home</title>
+        <title>Flashbacks</title>
       </Head>
 
       <PageContainer></PageContainer>
@@ -14,4 +13,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Flashbacks;

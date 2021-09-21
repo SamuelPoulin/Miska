@@ -81,6 +81,18 @@ const NavBar = () => {
         <NavBarLink href="/home" selected={router.asPath === "/home"}>
           Home
         </NavBarLink>
+        <NavBarLink
+          href="/soundbites"
+          selected={router.asPath === "/soundbites"}
+        >
+          Soundbites
+        </NavBarLink>
+        <NavBarLink
+          href="/flashbacks"
+          selected={router.asPath === "/flashbacks"}
+        >
+          Flashbacks
+        </NavBarLink>
         <NavBarLink href="/actions" selected={router.asPath === "/actions"}>
           Actions
         </NavBarLink>

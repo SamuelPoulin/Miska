@@ -2,8 +2,10 @@ import { Client, Message, VoiceChannel } from "discord.js";
 import { inject, injectable } from "inversify";
 
 import TYPES from "./inversify/types";
+import Soundbite, { ISoundbite } from "./models/soundbite";
 import CommandService from "./services/command-service";
 import DatabaseService from "./services/database-service";
+import SoundbiteService from "./services/soundbite-service";
 
 @injectable()
 export default class Miska {
@@ -11,7 +13,8 @@ export default class Miska {
 
   constructor(
     @inject(TYPES.CommandService) private commandService: CommandService,
-    @inject(TYPES.DatabaseService) private databaseService: DatabaseService
+    @inject(TYPES.DatabaseService) private databaseService: DatabaseService,
+    @inject(TYPES.SoundbiteService) private soundbiteService: SoundbiteService
   ) {
     this.client = new Client();
   }
@@ -75,6 +78,30 @@ export default class Miska {
   joinChannel(): void {
     this.client.channels.fetch("653141111824449536").then((channel) => {
       (channel as VoiceChannel).join();
+    });
+  }
+
+  getSoundBites(): Promise<ISoundbite[]> {
+    return new Promise<ISoundbite[]>((resolve, reject) => {
+      Soundbite.find({}).then((soundbites) => {
+        resolve(soundbites);
+      });
+    });
+  }
+
+  playSoundbite(name: string) {
+    this.soundbiteService.getSoundbite(name).then((path) => {
+      this.client.channels.fetch("653141111824449536").then((channel) => {
+        (channel as VoiceChannel).join().then((connection) => {
+          const dispatcher = connection.play(path);
+          dispatcher.on("finish", () =>
+            this.commandService.soundbiteDone.emit("finish")
+          );
+          dispatcher.on("error", () =>
+            this.commandService.soundbiteDone.emit("error")
+          );
+        });
+      });
     });
   }
 }
