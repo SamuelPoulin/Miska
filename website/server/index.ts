@@ -65,9 +65,9 @@ app.prepare().then(() => {
     });
 
     server.listen(port, () => {
-      console.log(`Server started on http://localhost:${port}`);
+      console.log(`Server started on http://192.168.0.70:${port}`);
       console.log(
-        `Apollo listening on http://localhost:${port}${apollo.graphqlPath}`
+        `Apollo listening on http://192.168.0.70:${port}${apollo.graphqlPath}`
       );
     });
   });
