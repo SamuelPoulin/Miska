@@ -78,7 +78,7 @@ const NavBar = () => {
           Home
         </NavBarLink>
         <NavBarLink href="/actions" selected={router.asPath === "/actions"}>
-          Settings
+          Actions
         </NavBarLink>
         <NavBarLink href="/settings" selected={router.asPath === "/settings"}>
           Settings
