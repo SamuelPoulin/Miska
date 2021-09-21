@@ -53,6 +53,11 @@ const SoundbiteName = styled.div`
   font-size: 24px;
 `;
 
+const SoundbiteCount = styled.div`
+  font-family: "Montserrat";
+  font-size: 16px;
+`;
+
 const SoundbitePlayButton = styled.button`
   width: 50px;
   height: 50px;
@@ -127,6 +132,9 @@ const Soundbites = () => {
               <SoundbiteContainer key={soundbite.name}>
                 <SoundbiteContent>
                   <SoundbiteName>{soundbite.name}</SoundbiteName>
+                  <SoundbiteCount>
+                    Played {soundbite.count} times.
+                  </SoundbiteCount>
                   <SoundbitePlayButton
                     onClick={() => playSoundbite({ name: soundbite.name })}
                   >
