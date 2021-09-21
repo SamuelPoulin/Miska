@@ -1,14 +1,14 @@
-import "reflect-metadata";
+// import "reflect-metadata";
 
-import dotenv from "dotenv";
-dotenv.config();
+// import dotenv from "dotenv";
+// dotenv.config();
 
-import Miska from "./miska";
-import container from "./inversify/inversify.config";
-import TYPES from "./inversify/types";
+// import Miska from "./miska";
+// import container from "./inversify/inversify.config";
+// import TYPES from "./inversify/types";
 
-const miska: Miska = container.get<Miska>(TYPES.Miska);
-miska.start();
+// const miska: Miska = container.get<Miska>(TYPES.Miska);
+// miska.start();
 
 import next from "next";
 import express, { Request, Response } from "express";
@@ -37,12 +37,12 @@ const resolvers = {
   },
   Mutation: {
     joinChannel: async () => {
-      miska.joinChannel();
+      // miska.joinChannel();
 
       return true;
     },
     leaveChannel: async () => {
-      miska.leaveVoiceChannels();
+      // miska.leaveVoiceChannels();
 
       return true;
     },

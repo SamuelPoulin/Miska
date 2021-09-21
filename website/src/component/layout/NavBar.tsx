@@ -32,7 +32,11 @@ const NavBarLinks = styled.div`
   flex-direction: column;
 `;
 
-const NavBarLink = styled.a`
+interface NavBarLinkProps {
+  selected: boolean;
+}
+
+const NavBarLink = styled.a<NavBarLinkProps>`
   display: flex;
   align-items: center;
   justify-content: center;

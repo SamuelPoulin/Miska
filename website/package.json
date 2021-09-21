@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "tsc -p tsconfig.server.json && node out/index.js",
+    "dev": "tsc -p tsconfig.server.json && node out/hate.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -11,6 +11,8 @@
   "dependencies": {
     "@discordjs/opus": "^0.5.0",
     "@types/lodash": "^4.14.173",
+    "@types/reflect-metadata": "^0.1.0",
+    "@types/styled-components": "^5.1.14",
     "apollo-server-express": "^3.3.0",
     "axios": "^0.21.1",
     "discord.js": "^12.5.3",

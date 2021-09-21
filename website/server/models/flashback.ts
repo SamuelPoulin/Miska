@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface IFlashback extends Document {
   name: string;
@@ -14,6 +14,6 @@ export const flashbackSchema = new Schema({
   count: { type: Number, default: 0 },
 });
 
-const Flashback = mongoose.model<IFlashback>('Flashback', flashbackSchema);
+const Flashback = mongoose.model<IFlashback>("Flashback", flashbackSchema);
 
 export default Flashback;

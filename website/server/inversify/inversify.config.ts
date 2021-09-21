@@ -1,11 +1,11 @@
-import { Container } from 'inversify';
+import { Container } from "inversify";
 
-import TYPES from './types';
-import Miska from '../miska';
-import FlashbackService from '../services/flashback-service';
-import SoundbiteService from '../services/soundbite-service';
-import DatabaseService from '../services/database-service';
-import CommandService from '../services/command-service';
+import TYPES from "./types";
+import Miska from "../miska";
+import FlashbackService from "../services/flashback-service";
+import SoundbiteService from "../services/soundbite-service";
+import DatabaseService from "../services/database-service";
+import CommandService from "../services/command-service";
 
 const container = new Container();
 

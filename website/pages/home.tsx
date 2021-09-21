@@ -1,3 +1,4 @@
+import Head from "next/head";
 import styled from "styled-components";
 import { useMutation } from "urql";
 
@@ -38,18 +39,23 @@ const Home = () => {
   const [leaveResult, leave] = useMutation(LeaveMutation);
 
   return (
-    <PageContainer>
-      <HomeContainer>
-        <HomeContent>
-          <CallToActionButton onClick={() => join()}>
-            Join Channel
-          </CallToActionButton>
-          <CallToActionButton onClick={() => leave()}>
-            Leave Channel
-          </CallToActionButton>
-        </HomeContent>
-      </HomeContainer>
-    </PageContainer>
+    <>
+      <Head>
+        <title>Home</title>
+      </Head>
+      <PageContainer>
+        <HomeContainer>
+          <HomeContent>
+            <CallToActionButton onClick={() => join()}>
+              Join Channel
+            </CallToActionButton>
+            <CallToActionButton onClick={() => leave()}>
+              Leave Channel
+            </CallToActionButton>
+          </HomeContent>
+        </HomeContainer>
+      </PageContainer>
+    </>
   );
 };
 

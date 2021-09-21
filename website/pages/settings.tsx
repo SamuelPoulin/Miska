@@ -1,7 +1,16 @@
+import Head from "next/head";
 import PageContainer from "../src/component/layout/PageContainer";
 
 const Settings = () => {
-  return <PageContainer></PageContainer>;
+  return (
+    <>
+      <Head>
+        <title>Settings</title>
+      </Head>
+
+      <PageContainer></PageContainer>
+    </>
+  );
 };
 
 export default Settings;
