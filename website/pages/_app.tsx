@@ -5,8 +5,6 @@ import { createClient, Provider } from "urql";
 
 import { theme } from "../src/theme/Theme";
 
-const { publicRuntimeConfig } = getConfig();
-
 import "../src/styles/fonts.css";
 
 const GlobalStyle = createGlobalStyle`
@@ -18,7 +16,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const client = createClient({
-  url: `${publicRuntimeConfig.host}/graphql`,
+  url: `/graphql`,
 });
 
 function MyApp({ Component, pageProps }: AppProps) {

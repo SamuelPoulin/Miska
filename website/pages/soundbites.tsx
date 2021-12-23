@@ -15,7 +15,7 @@ const SoundbitesContent = styled.div`
   display: flex;
   flex-direction: column;
 
-  margin-top: 25px;
+  margin: 25px 0px;
   padding: 25px;
   width: 90%;
 
@@ -128,7 +128,7 @@ const Soundbites = () => {
         <SoundbitesContainer>
           <SoundbitesContent>
             <SoundbitesContentTitle>All Soundbites</SoundbitesContentTitle>
-            {data?.soundbites?.map((soundbite: any) => (
+            {data?.soundbites?.sort((a: any, b: any) => a.count < b.count)?.map((soundbite: any) => (
               <SoundbiteContainer key={soundbite.name}>
                 <SoundbiteContent>
                   <SoundbiteName>{soundbite.name}</SoundbiteName>

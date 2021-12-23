@@ -164,7 +164,6 @@ export default class CommandService {
   }
 
   private injectSoundbite(message: Message): void {
-    console.log(message);
     this.soundbiteService
       .createSoundbite(message)
       .then((name) => {
