@@ -13,14 +13,10 @@ export default class DatabaseService {
         `mongodb://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_PASSWORD}@db/${process.env.MONGO_DB_DATABASE}`,
         {
           authSource: 'admin',
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-          useFindAndModify: false,
-          useCreateIndex: true,
         }
       )
       .then(
-        () => console.log('FlashbackService connected to MongoDB.'),
+        () => console.log('Connected to MongoDB.'),
         (err) => console.error(err)
       );
   }

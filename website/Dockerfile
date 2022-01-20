@@ -1,6 +1,6 @@
-FROM node:alpine
+FROM node:latest
 
-RUN apk add --update ffmpeg python3 make g++ && ln -sf python3 /usr/bin/python
+RUN apt update && apt upgrade -y && apt install -y ffmpeg
 
 WORKDIR /usr/src/miska/website
 

@@ -87,12 +87,6 @@ const NavBar = () => {
         >
           Soundbites
         </NavBarLink>
-        <NavBarLink
-          href="/flashbacks"
-          selected={router.asPath === "/flashbacks"}
-        >
-          Flashbacks
-        </NavBarLink>
         <NavBarLink href="/actions" selected={router.asPath === "/actions"}>
           Actions
         </NavBarLink>
