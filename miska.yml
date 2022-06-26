@@ -1,0 +1,24 @@
+resources:
+- name: miska
+  type: git
+  icon: github
+  source: 
+    uri: "https://github.com/SamuelPoulin/miska"
+
+jobs:
+- name: read-the-readme
+  plan:
+  - get: miska
+    trigger: true
+  - task: cat-readme
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: busybox
+      inputs:
+      - name: miska
+      run:
+        path: cat
+        args: ["miska/readme.md"]
