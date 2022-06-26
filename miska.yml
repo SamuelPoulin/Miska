@@ -3,7 +3,8 @@ resources:
   type: git
   icon: github
   source: 
-    uri: "https://github.com/SamuelPoulin/miska"
+    uri: https://github.com/SamuelPoulin/miska
+    branch: master
 
 jobs:
 - name: read-the-readme
