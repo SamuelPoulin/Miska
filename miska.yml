@@ -1,3 +1,4 @@
+---
 resources:
 - name: miska
   type: git
