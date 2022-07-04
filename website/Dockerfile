@@ -1,5 +1,4 @@
 FROM node:latest
-LABEL com.centurylinklabs.watchtower.enable="true"
 
 RUN apt update && apt upgrade -y && apt install -y ffmpeg
 
