@@ -47,7 +47,7 @@ export default class Miska {
       });
       
       this.client.on("messageCreate", async (message: Message) => {
-        if (!message.author.bot && message.channel.type !== "DM" && (message.channel.id == '452338796776652811' || message.channel.id == '306235988622049292')) {
+        if (!message.author.bot && message.channel.type !== "DM" && (message.channel.id == '452338796776652811')) {
           if (message.content === "stfu") {
             this.leaveVoiceChannels();
           } else if (message.content.includes("soundbites")) {
