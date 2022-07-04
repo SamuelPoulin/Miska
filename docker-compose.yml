@@ -9,16 +9,16 @@ services:
         source: ~/.docker/config.json
         target: /config.json
     environment:
-      WATCHTOWER_LABEL_ENABLE: true
+      WATCHTOWER_LABEL_ENABLE: "true"
     command: --interval 5
 
   website:
     image: localhost:5000/miska_website:latest
     restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
     build: 
       context: ./website/
-      labels:
-        centurylinklabs.watchtower.enable: true
     volumes:
       - ./website/src/:/usr/src/miska/website/src/
       - ./website/server/:/usr/src/miska/website/server/
