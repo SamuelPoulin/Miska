@@ -36,6 +36,7 @@ jobs:
 - name: build-and-push
   plan:
   - get: miska
+    trigger: true
   - task: build-task-image
     privileged: true
     config:
