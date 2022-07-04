@@ -1,7 +1,17 @@
 version: "3.8"
 
 services:
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - type: bind
+        source: ~/.docker/config.json
+        target: /config.json
+    command: --interval 5
+
   website:
+    image: localhost:5000/miska_website:latest
     restart: always
     build: ./website/
     volumes:
