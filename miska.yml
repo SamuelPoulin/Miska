@@ -52,6 +52,6 @@ jobs:
         CONTEXT: miska/website
       run:
         path: build
-  - put: simple-image
+  - put: miska-website
     params:
       image: image/image.tar
