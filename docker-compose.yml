@@ -8,6 +8,8 @@ services:
       - type: bind
         source: ~/.docker/config.json
         target: /config.json
+    environment:
+      WATCHTOWER_LABEL_ENABLE: true
     command: --interval 5
 
   website:
