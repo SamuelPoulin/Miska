@@ -11,9 +11,10 @@ resources:
   type: registry-image
   icon: docker
   source:
-    repository: http://localhost:5000/miska_website
+    repository: localhost:5000/miska_website
     username: ((registryUser))
     password: ((registryPass))
+    skip_ssl_verification: true
 
 jobs:
 - name: read-the-readme
