@@ -14,6 +14,9 @@ services:
 
   website:
     image: localhost:5000/miska_website:latest
+    deploy:
+      labels:
+        centurylinklabs.watchtower.enable: true
     restart: always
     build: ./website/
     volumes:
