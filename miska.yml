@@ -7,6 +7,14 @@ resources:
     uri: https://github.com/SamuelPoulin/miska
     branch: master
 
+- name: miska-website
+  type: registry-image
+  icon: docker
+  source:
+    repository: localhost:5000/miska_website
+    username: ((registryUser))
+    password: ((registryPass))
+
 jobs:
 - name: read-the-readme
   plan:
@@ -24,3 +32,26 @@ jobs:
       run:
         path: cat
         args: ["miska/readme.md"]
+
+- name: build-and-push
+  plan:
+  - get: miska
+  - task: build-task-image
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: vito/oci-build-task
+      inputs:
+      - name: miska
+      outputs:
+      - name: image
+      params:
+        CONTEXT: miska/website
+      run:
+        path: build
+  - put: simple-image
+    params:
+      image: image/image.tar
