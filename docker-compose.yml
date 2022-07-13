@@ -19,6 +19,8 @@ services:
       com.centurylinklabs.watchtower.enable: "true"
     build: 
       context: ./website/
+    env_file:
+      - website/.env
     volumes:
       - ./website/src/:/usr/src/miska/website/src/
       - ./website/server/:/usr/src/miska/website/server/
