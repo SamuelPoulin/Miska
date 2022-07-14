@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@discordjs/opus": "^0.7.0",
+    "@discordjs/opus": "^0.8.0",
     "@discordjs/voice": "^0.7.5",
     "@graphql-tools/utils": "^8.6.1",
     "@types/graphql-upload": "^8.0.11",
