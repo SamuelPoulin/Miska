@@ -141,7 +141,7 @@ const SoundbiteDeleteButton = styled.button`
   height: 50px;
 
   border: none;
-  background-color: #d93a3a;
+  background-color: darkred;
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.2s;
