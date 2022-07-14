@@ -1,6 +1,6 @@
 FROM node:latest
 
-RUN apt update apt install -y ffmpeg
+RUN apt update && apt install -y ffmpeg
 
 WORKDIR /usr/src/miska/website
 
