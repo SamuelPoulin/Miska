@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  website:
+    build: 
+      context: ./website/
+    volumes:
+      - ./website/src/:/usr/src/miska/website/src/
+      - ./website/server/:/usr/src/miska/website/server/
+      - ./website/pages/:/usr/src/miska/website/pages/
+      - ./website/public/:/usr/src/miska/website/public/

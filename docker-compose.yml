@@ -6,15 +6,9 @@ services:
     restart: always
     labels:
       com.centurylinklabs.watchtower.enable: "true"
-    build: 
-      context: ./website/
     env_file:
       - website/.env
     volumes:
-      - ./website/src/:/usr/src/miska/website/src/
-      - ./website/server/:/usr/src/miska/website/server/
-      - ./website/pages/:/usr/src/miska/website/pages/
-      - ./website/public/:/usr/src/miska/website/public/
       - ./database/content/:/usr/src/miska/database/content/
     ports:
       - 6969:6969
