@@ -9,8 +9,13 @@ miska.start();
 
 import next from "next";
 import express, { Request, Response } from "express";
+
 import { ApolloServer, gql } from "apollo-server-express";
 import { IResolvers } from "@graphql-tools/utils";
+const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
+const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
+
+import { finished } from "stream/promises";
 
 const dev = process.env.NODE_ENV !== "production";
 const port = 6969;
@@ -19,6 +24,14 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 const typeDefs = gql`
+  scalar Upload
+
+  type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+  }
+
   type Soundbite {
     name: String!
     description: String
@@ -33,10 +46,13 @@ const typeDefs = gql`
     joinChannel: Boolean
     leaveChannel: Boolean
     playSoundbite(name: String): Boolean
+    uploadSoundbite(file: Upload!): File!
+    deleteSoundbite(name: String): Boolean
   }
 `;
 
 const resolvers: IResolvers = {
+  Upload: GraphQLUpload,
   Query: {
     soundbites: async () => {
       const soundBites = await miska.getSoundBites();
@@ -62,6 +78,17 @@ const resolvers: IResolvers = {
     playSoundbite: async (_, { name }) => {
       miska.playSoundbite(name);
     },
+    deleteSoundbite: async (_, {name}) => {
+      miska.deleteSoundbite(name);
+    },
+    uploadSoundbite: async (_, { file }) => {
+      const { createReadStream, filename, mimetype, encoding } = await file;
+
+      const stream = createReadStream();
+      miska.soundbiteService.createSoundbiteFromStream(filename.split('.')[0], stream)
+
+      return { filename, mimetype, encoding };
+    },
   },
 };
 
@@ -74,6 +101,8 @@ app.prepare().then(() => {
   apollo.start().then(() => {
     const server = express();
 
+    server.use(graphqlUploadExpress());
+
     apollo.applyMiddleware({ app: server });
 
     server.get("*", (req: Request, res: Response) => {
@@ -81,10 +110,8 @@ app.prepare().then(() => {
     });
 
     server.listen(port, () => {
-      console.log(`Server started on http://192.168.0.70:${port}`);
-      console.log(
-        `Apollo listening on http://192.168.0.70:${port}${apollo.graphqlPath}`
-      );
+      console.log(`Server started on port ${port}`);
+      console.log(`Apollo listening on ${apollo.graphqlPath}`);
     });
   });
 });

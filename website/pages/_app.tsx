@@ -1,7 +1,7 @@
 import type { AppProps } from "next/app";
-import getConfig from "next/config";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
-import { createClient, Provider } from "urql";
+import { cacheExchange, createClient, dedupExchange, Provider } from "urql";
+import { multipartFetchExchange } from '@urql/exchange-multipart-fetch';
 
 import { theme } from "../src/theme/Theme";
 
@@ -17,6 +17,7 @@ const GlobalStyle = createGlobalStyle`
 
 const client = createClient({
   url: `/graphql`,
+  exchanges: [dedupExchange, cacheExchange, multipartFetchExchange]
 });
 
 function MyApp({ Component, pageProps }: AppProps) {
