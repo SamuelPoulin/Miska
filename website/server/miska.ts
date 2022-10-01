@@ -7,7 +7,7 @@ import {
   getVoiceConnections,
   joinVoiceChannel,
 } from "@discordjs/voice";
-import { Client, Intents, Message, VoiceChannel } from "discord.js";
+import { ChannelType, Client, GatewayIntentBits, Message, VoiceChannel } from "discord.js";
 import { inject, injectable } from "inversify";
 import ytdl from "ytdl-core";
 import { createReadStream } from "fs";
@@ -28,9 +28,9 @@ export default class Miska {
   ) {
     this.client = new Client({
       intents: [
-        Intents.FLAGS.GUILD_VOICE_STATES,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILDS,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.Guilds,
       ],
     });
 
@@ -69,7 +69,7 @@ export default class Miska {
     this.client.on("messageCreate", async (message: Message) => {
       if (
         !message.author.bot &&
-        message.channel.type !== "DM" &&
+        message.channel.type !== ChannelType.DM &&
         message.channel.id == "452338796776652811"
       ) {
         if (message.content === "stfu") {

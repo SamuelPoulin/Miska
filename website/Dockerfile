@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:lts-bullseye
 
 RUN apt update && apt install -y ffmpeg
 

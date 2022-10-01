@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { InternalDiscordGatewayAdapterCreator, Message, MessageAttachment } from 'discord.js';
+import { Attachment, Message} from 'discord.js';
 import { injectable } from 'inversify';
 import Soundbite, { ISoundbite } from '../models/soundbite';
 import fs from 'fs';
@@ -158,7 +158,7 @@ export default class SoundbiteService {
             });
           }
           
-          private validateAttachment(attachment: MessageAttachment): boolean {
+          private validateAttachment(attachment: Attachment): boolean {
             if (attachment && attachment.name) {
               const splitFilename = attachment.name.split('.');
               

@@ -12,10 +12,8 @@ import express, { Request, Response } from "express";
 
 import { ApolloServer, gql } from "apollo-server-express";
 import { IResolvers } from "@graphql-tools/utils";
-const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
-const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
 
-import { finished } from "stream/promises";
+import {graphqlUploadExpress, GraphQLUpload} from "graphql-upload-minimal"
 
 const dev = process.env.NODE_ENV !== "production";
 const port = 6969;
@@ -78,14 +76,17 @@ const resolvers: IResolvers = {
     playSoundbite: async (_, { name }) => {
       miska.playSoundbite(name);
     },
-    deleteSoundbite: async (_, {name}) => {
+    deleteSoundbite: async (_, { name }) => {
       miska.deleteSoundbite(name);
     },
     uploadSoundbite: async (_, { file }) => {
       const { createReadStream, filename, mimetype, encoding } = await file;
 
       const stream = createReadStream();
-      miska.soundbiteService.createSoundbiteFromStream(filename.split('.')[0], stream)
+      miska.soundbiteService.createSoundbiteFromStream(
+        filename.split(".")[0],
+        stream
+      );
 
       return { filename, mimetype, encoding };
     },
@@ -98,7 +99,7 @@ const apollo = new ApolloServer({
 });
 
 app.prepare().then(() => {
-  apollo.start().then(() => {
+  apollo.start().then(async () => {
     const server = express();
 
     server.use(graphqlUploadExpress());
