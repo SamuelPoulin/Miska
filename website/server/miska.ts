@@ -1,13 +1,21 @@
 import {
   AudioPlayer,
   AudioPlayerStatus,
+  AudioResource,
   createAudioPlayer,
   createAudioResource,
   DiscordGatewayAdapterCreator,
   getVoiceConnections,
   joinVoiceChannel,
+  VoiceConnection,
 } from "@discordjs/voice";
-import { ChannelType, Client, GatewayIntentBits, Message, VoiceChannel } from "discord.js";
+import {
+  ChannelType,
+  Client,
+  GatewayIntentBits,
+  Message,
+  VoiceChannel,
+} from "discord.js";
 import { inject, injectable } from "inversify";
 import ytdl from "ytdl-core";
 import { createReadStream } from "fs";
@@ -31,6 +39,7 @@ export default class Miska {
         GatewayIntentBits.GuildVoiceStates,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.Guilds,
+        GatewayIntentBits.MessageContent,
       ],
     });
 
@@ -38,9 +47,6 @@ export default class Miska {
     this.player.on(AudioPlayerStatus.Idle, () => {
       this.leaveVoiceChannels();
     });
-    this.player.on("stateChange", (oldState, newState) =>
-      console.log(`Old: ${oldState.status}, New: ${newState.status}`)
-    );
     this.player.on("error", (error) => {
       console.error(error);
     });
@@ -52,8 +58,9 @@ export default class Miska {
     this.login();
   }
 
-  private playResource(connection: any, resource: any) {
+  private playResource(connection: VoiceConnection, resource: AudioResource) {
     connection.subscribe(this.player);
+
     this.player.play(resource);
   }
 
@@ -68,111 +75,113 @@ export default class Miska {
 
     this.client.on("messageCreate", async (message: Message) => {
       if (
-        !message.author.bot &&
-        message.channel.type !== ChannelType.DM &&
-        message.channel.id == "452338796776652811"
-      ) {
-        if (message.content === "stfu") {
-          this.leaveVoiceChannels();
-        } else if (message.content.includes("soundbites")) {
-          const splitContent = message.content.split(" ");
+        message.author.bot ||
+        message.channel.type === ChannelType.DM ||
+        message.channel.id != "452338796776652811"
+      )
+        return;
 
-          if (splitContent.length == 1) {
-            this.soundbiteService.getAllSoundbites().then((soundbites) => {
-              let text = "";
+      if (message.content === "stfu") {
+        this.leaveVoiceChannels();
+      } else if (message.content.includes("soundbites")) {
+        const splitContent = message.content.split(" ");
 
-              for (const soundbite of soundbites) {
-                text += `> :outbox_tray: **${soundbite.count}**\t\`${soundbite.name}\`\n\n`;
-              }
+        if (splitContent.length == 1) {
+          this.soundbiteService.getAllSoundbites().then((soundbites) => {
+            let text = "";
 
-              message.channel.send(text);
-            });
-          } else if (
-            splitContent[1] == "delete" ||
-            splitContent[1] == "remove"
-          ) {
-            this.soundbiteService
-              .deleteSoundbite(splitContent[2])
-              .then(() => {
-                message.channel.send(
-                  `> :white_check_mark: Successfully purged \`${splitContent[2]}\` from the soundbites.`
-                );
-              })
-              .catch((e) => {
-                message.channel.send(`> :x: Could not purge the soundbite.`);
-                console.error(e);
-              });
-          } else if (splitContent[1] == "add" || splitContent[1] == "insert") {
-            this.soundbiteService
-              .createSoundbite(message)
-              .then((name) => {
-                message.channel.send(
-                  `> :white_check_mark: Successfully added \`${name}\` to the soundbites.`
-                );
-              })
-              .catch((e) => {
-                message.channel.send(`> :x: Could not add the soundbite.`);
-                console.error(e);
-              });
-          }
-        } else if (message.content.includes("youtube")) {
-          const splitContent = message.content.split(" ");
-
-          if (
-            ytdl.validateURL(splitContent[0]) &&
-            message.member?.voice?.channel &&
-            message.guild
-          ) {
-            const parameters =
-              splitContent.length == 1
-                ? { url: splitContent[0], name: null }
-                : { url: splitContent[0], name: splitContent[1] };
-
-            const video = ytdl(parameters.url, { filter: "audioonly" });
-
-            const connection = joinVoiceChannel({
-              channelId: message.member.voice.channel.id,
-              guildId: message.guild?.id,
-              adapterCreator: message.guild
-                ?.voiceAdapterCreator as DiscordGatewayAdapterCreator,
-            });
-
-            const resource = createAudioResource(ytdl(parameters.url));
-
-            this.playResource(connection, resource);
-
-            if (parameters.name) {
-              this.soundbiteService
-                .createSoundbiteFromStream(parameters.name, video)
-                .then(() => {
-                  message.channel.send(
-                    `> :white_check_mark: Successfully added \`${parameters.name}\` to the soundbites.`
-                  );
-                })
-                .catch((e) => {
-                  message.channel.send(`> :x: Could not add the soundbite.`);
-                  console.error(e);
-                });
+            for (const soundbite of soundbites) {
+              text += `> :outbox_tray: **${soundbite.count}**\t\`${soundbite.name}\`\n\n`;
             }
-          }
-        } else if ((message.content.match(/ /g) || []).length == 0) {
-          const soundbite = await this.soundbiteService.getSoundbite(
-            message.content
+
+            message.channel.send(text);
+          });
+        } else if (splitContent[1] == "delete" || splitContent[1] == "remove") {
+          this.soundbiteService
+            .deleteSoundbite(splitContent[2])
+            .then(() => {
+              message.channel.send(
+                `> :white_check_mark: Successfully purged \`${splitContent[2]}\` from the soundbites.`
+              );
+            })
+            .catch((e) => {
+              message.channel.send(`> :x: Could not purge the soundbite.`);
+              console.error(e);
+            });
+        } else if (splitContent[1] == "add" || splitContent[1] == "insert") {
+          this.soundbiteService
+            .createSoundbite(message)
+            .then((name) => {
+              message.channel.send(
+                `> :white_check_mark: Successfully added \`${name}\` to the soundbites.`
+              );
+            })
+            .catch((e) => {
+              message.channel.send(`> :x: Could not add the soundbite.`);
+              console.error(e);
+            });
+        }
+      } else if (message.content.includes("youtube")) {
+        const splitContent = message.content.split(" ");
+
+        if (
+          !ytdl.validateURL(splitContent[0]) ||
+          !message.member?.voice?.channel ||
+          !message.guild
+        ) {
+          return;
+        }
+
+        const parameters =
+          splitContent.length == 1
+            ? { url: splitContent[0], name: null }
+            : { url: splitContent[0], name: splitContent[1] };
+
+        const video = ytdl(parameters.url, { filter: "audioonly" });
+        const resource = createAudioResource(video);
+
+        const connection = joinVoiceChannel({
+          channelId: message.member.voice.channel.id,
+          guildId: message.guild.id,
+          adapterCreator: message.guild.voiceAdapterCreator,
+        });
+
+
+        this.playResource(connection, resource);
+
+        if (!parameters.name) return;
+
+        try {
+          await this.soundbiteService.createSoundbiteFromStream(
+            parameters.name,
+            video
           );
 
-          if (soundbite && message.member?.voice?.channel && message.guild) {
-            const connection = joinVoiceChannel({
-              channelId: message.member.voice.channel.id,
-              guildId: message.guild?.id,
-              adapterCreator: message.guild
-                ?.voiceAdapterCreator as DiscordGatewayAdapterCreator,
-            });
-
-            const resource = createAudioResource(createReadStream(soundbite));
-
-            this.playResource(connection, resource);
-          }
+          message.channel.send(
+            `> :white_check_mark: Successfully added \`${parameters.name}\` to the soundbites.`
+          );
+        } catch (err) {
+          message.channel.send(`> :x: Could not add the soundbite.`);
+          console.error(err);
         }
+      } else if ((message.content.match(/ /g) || []).length == 0) {
+        const soundbite = await this.soundbiteService.getSoundbite(
+          message.content
+        );
+
+        if (!soundbite || !message.member?.voice?.channel || !message.guild)
+          return;
+
+        const connection = joinVoiceChannel({
+          channelId: message.member.voice.channel.id,
+          guildId: message.guild?.id,
+          adapterCreator: message.guild
+            ?.voiceAdapterCreator as DiscordGatewayAdapterCreator,
+        });
+
+        const resource = createAudioResource(createReadStream(soundbite));
+
+        this.playResource(connection, resource);
       }
     });
 
