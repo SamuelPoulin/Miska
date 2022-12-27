@@ -1,11 +1,4 @@
-import "reflect-metadata";
-
-import Miska from "./miska";
-import container from "./inversify/inversify.config";
-import TYPES from "./inversify/types";
-
-const miska: Miska = container.get<Miska>(TYPES.Miska);
-miska.start();
+import miska from "./miska";
 
 import next from "next";
 import express, { Request, Response } from "express";
@@ -13,7 +6,9 @@ import express, { Request, Response } from "express";
 import { ApolloServer, gql } from "apollo-server-express";
 import { IResolvers } from "@graphql-tools/utils";
 
-import {graphqlUploadExpress, GraphQLUpload} from "graphql-upload-minimal"
+import { graphqlUploadExpress, GraphQLUpload } from "graphql-upload-minimal";
+
+miska.init();
 
 const dev = process.env.NODE_ENV !== "production";
 const port = 6969;
@@ -53,9 +48,9 @@ const resolvers: IResolvers = {
   Upload: GraphQLUpload,
   Query: {
     soundbites: async () => {
-      const soundBites = await miska.getSoundBites();
+      const soundbites = await miska.getAllSoundbites();
 
-      return soundBites.map((soundbite) => ({
+      return soundbites.map((soundbite) => ({
         name: soundbite.name,
         description: soundbite.description,
         count: soundbite.count,
@@ -83,10 +78,7 @@ const resolvers: IResolvers = {
       const { createReadStream, filename, mimetype, encoding } = await file;
 
       const stream = createReadStream();
-      miska.soundbiteService.createSoundbiteFromStream(
-        filename.split(".")[0],
-        stream
-      );
+      miska.createSoundbiteFromStream(filename.split(".")[0], stream);
 
       return { filename, mimetype, encoding };
     },
