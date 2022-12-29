@@ -105,13 +105,28 @@ const handleSoundbitesMessage = async (message: Message) => {
         return;
       }
 
-      let text = "";
+      const messages = [];
+      const maxLength = 2000;
 
-      for (const soundbite of soundbites) {
-        text += `> :outbox_tray: **${soundbite.count}**\t\`${soundbite.name}\`\n\n`;
+      let currentMessage = "";
+
+      for (let soundbite of soundbites) {
+        const line = `:arrow_forward: **${soundbite.count}**\t\`${soundbite.name}\`\n`;
+
+        if ((currentMessage + line).length >= maxLength) {
+          messages.push(currentMessage);
+
+          currentMessage = "";
+        }
+
+        currentMessage += line;
       }
 
-      message.channel.send(text);
+      messages.push(currentMessage);
+
+      for (let soundbiteMessage of messages) {
+        message.channel.send(soundbiteMessage);
+      }
     } catch (e) {
       console.error(e);
       message.channel.send("> :x: Could not retrieve the list of soundbites.");
