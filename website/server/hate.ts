@@ -1,30 +1,25 @@
 import miska from "./miska";
 
+import { json } from "body-parser";
+import cors from "cors";
+
 import next from "next";
 import express, { Request, Response } from "express";
 
-import { ApolloServer, gql } from "apollo-server-express";
 import { IResolvers } from "@graphql-tools/utils";
 
-import { graphqlUploadExpress, GraphQLUpload } from "graphql-upload-minimal";
+import { expressMiddleware } from "@apollo/server/express4";
+import { ApolloServer, BaseContext } from "@apollo/server";
 
 miska.init();
 
 const dev = process.env.NODE_ENV !== "production";
 const port = 6969;
 
-const app = next({ dev });
-const handle = app.getRequestHandler();
+const nextApp = next({ dev });
+const nextHandle = nextApp.getRequestHandler();
 
-const typeDefs = gql`
-  scalar Upload
-
-  type File {
-    filename: String!
-    mimetype: String!
-    encoding: String!
-  }
-
+const typeDefs = `#graphql
   type Soundbite {
     name: String!
     description: String
@@ -39,13 +34,11 @@ const typeDefs = gql`
     joinChannel: Boolean
     leaveChannel: Boolean
     playSoundbite(name: String): Boolean
-    uploadSoundbite(file: Upload!): File!
     deleteSoundbite(name: String): Boolean
   }
 `;
 
 const resolvers: IResolvers = {
-  Upload: GraphQLUpload,
   Query: {
     soundbites: async () => {
       const soundbites = await miska.getAllSoundbites();
@@ -74,37 +67,36 @@ const resolvers: IResolvers = {
     deleteSoundbite: async (_, { name }) => {
       miska.deleteSoundbite(name);
     },
-    uploadSoundbite: async (_, { file }) => {
-      const { createReadStream, filename, mimetype, encoding } = await file;
-
-      const stream = createReadStream();
-      miska.createSoundbiteFromStream(filename.split(".")[0], stream);
-
-      return { filename, mimetype, encoding };
-    },
   },
 };
 
-const apollo = new ApolloServer({
+const expressServer = express();
+
+const apollo = new ApolloServer<BaseContext>({
   typeDefs,
   resolvers,
 });
 
-app.prepare().then(() => {
-  apollo.start().then(async () => {
-    const server = express();
+const initialize = async () => {
+  await nextApp.prepare();
 
-    server.use(graphqlUploadExpress());
+  await apollo.start();
 
-    apollo.applyMiddleware({ app: server });
+  expressServer.use(
+    "/graphql",
+    cors<cors.CorsRequest>(),
+    json(),
+    expressMiddleware(apollo)
+  );
 
-    server.get("*", (req: Request, res: Response) => {
-      handle(req, res);
-    });
-
-    server.listen(port, () => {
-      console.log(`Server started on port ${port}`);
-      console.log(`Apollo listening on ${apollo.graphqlPath}`);
-    });
+  expressServer.get("*", (req: Request, res: Response) => {
+    nextHandle(req, res);
   });
-});
+
+  expressServer.listen(port, () => {
+    console.log(`Server started on port ${port}`);
+    console.log(`Apollo listening on http://localhost:${port}/graphql`);
+  });
+};
+
+initialize();

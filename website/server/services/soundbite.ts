@@ -49,7 +49,7 @@ export const createSoundbite = async (message: Message) => {
     return splitFilename[0];
   } catch (e) {
     console.error(e);
-    soundbite.remove();
+    soundbite.deleteOne();
 
     message.channel.send(`> :x: Could not add the soundbite.`);
   }
@@ -75,7 +75,7 @@ export const createSoundbiteFromStream = async (name: string, stream: any) => {
   } catch (e) {
     console.error(e);
 
-    soundbite.remove();
+    soundbite.deleteOne();
     throw e;
   }
 };

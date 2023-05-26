@@ -21,9 +21,7 @@ import {
   VoiceState,
 } from "discord.js";
 
-import ytdl from "ytdl-core";
-
-import Soundbite, { ISoundbite } from "./models/soundbite";
+import ytdl from "@distube/ytdl-core";
 
 import {
   createSoundbite,

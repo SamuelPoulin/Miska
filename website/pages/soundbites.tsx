@@ -50,7 +50,7 @@ const SoundbiteContainer = styled.div`
 
   margin: 0px 25px;
   margin-top: 25px;
-  :last-child {
+  &:last-child {
     margin-bottom: 25px;
   }
 
@@ -97,10 +97,6 @@ const SoundbitePlayButton = styled.button`
     box-shadow: 0px 0px 3px lightblue;
     transform: translateY(2px);
   }
-`;
-
-const SoundbiteUploadInput = styled.input`
-  display: none;
 `;
 
 const SoundbiteAddButton = styled.button`
@@ -229,17 +225,7 @@ const DeleteSountbiteMutation = `
 	}
 `;
 
-const UploadSoundbiteMutation = `
-  mutation ($file: Upload!) {
-    uploadSoundbite(file: $file) {
-      filename
-    }
-  }
-`;
-
 const Soundbites = () => {
-  const soundbiteUploadButtonRef = useRef<HTMLInputElement>(null);
-
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: SoundbitesQuery,
   });
@@ -251,26 +237,6 @@ const Soundbites = () => {
   const [deleteSoundbiteResult, deleteSoundbite] = useMutation(
     DeleteSountbiteMutation
   );
-
-  const [uploadSoundbiteResult, uploadSoundbite] = useMutation(
-    UploadSoundbiteMutation
-  );
-
-  const handleSoundbiteUpload = () => {
-    if (soundbiteUploadButtonRef.current) {
-      soundbiteUploadButtonRef.current.click();
-    }
-  };
-
-  const handleSoundbiteUploaded = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-
-    if (!files) return;
-
-    uploadSoundbite({ file: files[0] }).then(() => {
-      reexecuteQuery({ requestPolicy: "network-only" });
-    });
-  };
 
   const handleDeleteSoundbite = (name: string) => {
     deleteSoundbite({ name }).then(() =>
@@ -289,15 +255,6 @@ const Soundbites = () => {
           <SoundbitesContainer>
             <SoundbitesTitleContainer>
               <SoundbitesTitle>All Soundbites</SoundbitesTitle>
-              <SoundbiteAddButton onClick={handleSoundbiteUpload}>
-                <SoundbiteUploadInput
-                  type="file"
-                  ref={soundbiteUploadButtonRef}
-                  onChange={handleSoundbiteUploaded}
-                />
-                <span>Add</span>
-                <SoundbiteAddIcon />
-              </SoundbiteAddButton>
             </SoundbitesTitleContainer>
             <SoundbitesContent>
               {data?.soundbites
