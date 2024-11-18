@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Attachment, Message } from "discord.js";
+import { Attachment, ChannelType, Message, TextChannel } from "discord.js";
 import fs from "fs";
 
 import { contentPath } from "../util/constants";
@@ -22,7 +22,7 @@ export const createSoundbite = async (message: Message) => {
   const attachment = message.attachments.first();
 
   if (!attachment || !attachment.name || !validateAttachment(attachment)) {
-    message.channel.send(`> :x: Try adding an mp3 file as an attachment.`);
+    if (message.channel.type == ChannelType.GuildText) message.channel.send(`> :x: Try adding an mp3 file as an attachment.`);
 
     return;
   }
@@ -51,7 +51,7 @@ export const createSoundbite = async (message: Message) => {
     console.error(e);
     soundbite.deleteOne();
 
-    message.channel.send(`> :x: Could not add the soundbite.`);
+    if (message.channel.type == ChannelType.GuildText) message.channel.send(`> :x: Could not add the soundbite.`);
   }
 };
 

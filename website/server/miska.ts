@@ -98,7 +98,7 @@ const handleSoundbitesMessage = async (message: Message) => {
       const soundbites = await getAllSoundbites();
 
       if (soundbites.length === 0) {
-        message.channel.send("> :x: There are no soundbites.");
+        if (message.channel.type == ChannelType.GuildText) message.channel.send("> :x: There are no soundbites.");
 
         return;
       }
@@ -123,33 +123,33 @@ const handleSoundbitesMessage = async (message: Message) => {
       messages.push(currentMessage);
 
       for (let soundbiteMessage of messages) {
-        message.channel.send(soundbiteMessage);
+        if (message.channel.type == ChannelType.GuildText) message.channel.send(soundbiteMessage);
       }
     } catch (e) {
       console.error(e);
-      message.channel.send("> :x: Could not retrieve the list of soundbites.");
+      if (message.channel.type == ChannelType.GuildText) message.channel.send("> :x: Could not retrieve the list of soundbites.");
     }
   } else if (splitContent[1] == "delete" || splitContent[1] == "remove") {
     try {
       await deleteSoundbite(splitContent[2]);
 
-      message.channel.send(
+      if (message.channel.type == ChannelType.GuildText) message.channel.send(
         `> :white_check_mark: Successfully purged \`${splitContent[2]}\` from the soundbites.`
       );
     } catch (e) {
       console.error(e);
-      message.channel.send(`> :x: Could not purge the soundbite.`);
+      if (message.channel.type == ChannelType.GuildText) message.channel.send(`> :x: Could not purge the soundbite.`);
     }
   } else if (splitContent[1] == "add" || splitContent[1] == "insert") {
     try {
       const name = await createSoundbite(message);
 
-      message.channel.send(
+      if (message.channel.type == ChannelType.GuildText) message.channel.send(
         `> :white_check_mark: Successfully added \`${name}\` to the soundbites.`
       );
     } catch (e) {
       console.error(e);
-      message.channel.send(`> :x: Could not add the soundbite.`);
+      if (message.channel.type == ChannelType.GuildText) message.channel.send(`> :x: Could not add the soundbite.`);
     }
   }
 };
@@ -186,11 +186,11 @@ const handleYoutubeMessage = async (message: Message) => {
   try {
     await createSoundbiteFromStream(parameters.name, video);
 
-    message.channel.send(
+    if (message.channel.type == ChannelType.GuildText) message.channel.send(
       `> :white_check_mark: Successfully added \`${parameters.name}\` to the soundbites.`
     );
   } catch (err) {
-    message.channel.send(`> :x: Could not add the soundbite.`);
+    if (message.channel.type == ChannelType.GuildText) message.channel.send(`> :x: Could not add the soundbite.`);
     console.error(err);
   }
 };

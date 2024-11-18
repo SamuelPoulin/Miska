@@ -1,4 +1,4 @@
-FROM node:lts-iron
+FROM node:lts-jod
 
 RUN apt update && apt install -y ffmpeg
 
